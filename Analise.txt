@@ -1,0 +1,16 @@
+ set @data = (   select           max(tces.dt_data) dt_data   from           transmissao_combinacao_sensor tces with (nolock)               join combinacao_sensor_valor cesv with (nolock) on cesv.id_combinacao_sensor=tces.id_combinacao_sensor              where       tces.id_equipamento = @p0    and cesv.id_sensor = @p1    and tces.dt_data < @p2    and (select count(*) from transmissao_sensor_persistencia with (nolock) where id_transmissao = tces.id_transmissao) = 0 
+
+DECLARE @DATA DATETIME 
+set @data = (   select           max(tces.dt_data) dt_data    from           transmissao_combinacao_sensor tces with (nolock)   
+join combinacao_sensor_valor cesv with (nolock) on cesv.id_combinacao_sensor=tces.id_combinacao_sensor  
+where       tces.id_equipamento = 502   and cesv.id_sensor = 654    
+and tces.dt_data < '2018-11-21 16:11:57.783'  
+and NOT EXISTS (select TOP 1 * from transmissao_sensor_persistencia with (nolock) where id_transmissao = tces.id_transmissao))
+
+
+
+
+1) select min(num_voltagem_bateria) from (   select     top 1000    t.num_voltagem_bateria   from     transmissao t with (nolock)   where     id_equipamento=101          and id_modulo=20    and num_velocidade > 10    and t.num_voltagem_bateria > 100   order by dt_data desc  ) t
+CREATE NONCLUSTERED INDEX IDX01_DBA_transmissao
+ON [dbo].[transmissao] ([id_equipamento],[id_modulo],[num_velocidade],[num_voltagem_bateria])
+INCLUDE ([dt_data])
